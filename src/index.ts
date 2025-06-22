@@ -1,25 +1,15 @@
-import { createServer, IncomingMessage, ServerResponse } from "node:http";
-const PORT = 4000;
+import { createApp } from "./framework";
 
-const requestListener = (req: IncomingMessage, res: ServerResponse) => {
-  const path = req.url;
-  const method = req.method;
+const app = createApp();
 
-  console.log(`${method} ${path}`);
+app.on("request: received", () => {
+  console.log("request received");
+});
 
-  const response = {
-    statusCode: 200,
-    path: path,
-    method: method,
-  };
+app.on("request: processed", () => {
+  console.log("request processed");
+});
 
-  res.writeHead(200, { "Content-Type": "Application/json" });
-  res.write(JSON.stringify(response));
-  res.end();
-};
-
-const server = createServer(requestListener);
-
-server.listen(PORT, () => {
-  console.log(`server listening on port ${PORT}`);
+app.listen(4000, () => {
+  console.log("server listening on port 4000");
 });
