@@ -1,5 +1,6 @@
 import { createServer, IncomingMessage, ServerResponse } from "node:http";
 import { EventEmitter } from "node:stream";
+import { RequestImpl } from "./request";
 
 export class Server extends EventEmitter {
   private server: ReturnType<typeof createServer>;
@@ -9,8 +10,13 @@ export class Server extends EventEmitter {
     this.server = createServer(this.handleRequest.bind(this));
   }
 
-  private handleRequest(nodeReq: IncomingMessage, nodeRes: ServerResponse) {
+  private async handleRequest(
+    nodeReq: IncomingMessage,
+    nodeRes: ServerResponse
+  ) {
     this.emit("request: received");
+    const request = new RequestImpl(nodeReq);
+    await request.parseBody();
 
     const response = {
       statusCode: 200,
